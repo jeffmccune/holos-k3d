@@ -1,0 +1,67 @@
+---
+# Source: CUE apiObjects.Namespace.argocd
+metadata:
+  name: argocd
+  labels:
+    kubernetes.io/metadata.name: argocd
+kind: Namespace
+apiVersion: v1
+---
+# Source: CUE apiObjects.Namespace.cert-manager
+metadata:
+  name: cert-manager
+  labels:
+    kubernetes.io/metadata.name: cert-manager
+kind: Namespace
+apiVersion: v1
+---
+# Source: CUE apiObjects.Namespace.dev-holos
+metadata:
+  name: dev-holos
+  labels:
+    kubernetes.io/metadata.name: dev-holos
+kind: Namespace
+apiVersion: v1
+---
+# Source: CUE apiObjects.Namespace.external-secrets
+metadata:
+  name: external-secrets
+  labels:
+    kubernetes.io/metadata.name: external-secrets
+kind: Namespace
+apiVersion: v1
+---
+# Source: CUE apiObjects.Namespace.holos-system
+metadata:
+  name: holos-system
+  labels:
+    kubernetes.io/metadata.name: holos-system
+kind: Namespace
+apiVersion: v1
+---
+# Source: CUE apiObjects.Namespace.istio-gateways
+metadata:
+  name: istio-gateways
+  labels:
+    grant.holos.run/subdomain.admin: "true"
+    grant.holos.run/subdomain.login: "true"
+    grant.holos.run/subdomain.app: "true"
+    kubernetes.io/metadata.name: istio-gateways
+kind: Namespace
+apiVersion: v1
+---
+# Source: CUE apiObjects.Namespace.istio-system
+metadata:
+  name: istio-system
+  labels:
+    kubernetes.io/metadata.name: istio-system
+kind: Namespace
+apiVersion: v1
+---
+# Source: CUE apiObjects.Namespace.postgres-operator
+metadata:
+  name: postgres-operator
+  labels:
+    kubernetes.io/metadata.name: postgres-operator
+kind: Namespace
+apiVersion: v1

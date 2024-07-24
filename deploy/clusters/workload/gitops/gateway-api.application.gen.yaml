@@ -1,0 +1,13 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: gateway-api
+  namespace: argocd
+spec:
+  destination:
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: ./deploy/clusters/workload/components/gateway-api
+    repoURL: git@github.com:holos-run/holos-k3d.git
+    targetRevision: HEAD

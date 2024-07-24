@@ -1,0 +1,25 @@
+---
+# Source: CUE apiObjects.AuthorizationPolicy.argo-authpolicy-allow-argocd
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      istio.io/gateway-name: default
+  rules:
+    - to:
+        - operation:
+            hosts:
+              - argocd.holos.localhost
+              - argocd.holos.localhost:*
+      when:
+        - key: request.headers[user-agent]
+          values:
+            - anonymous
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: argo-authpolicy-allow-argocd
+  namespace: istio-gateways
+  labels:
+    app.kubernetes.io/name: argo-authpolicy-allow-argocd
+    app.kubernetes.io/part-of: default-gateway

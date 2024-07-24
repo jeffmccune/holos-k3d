@@ -1,0 +1,91 @@
+---
+# Source: CUE apiObjects.AuthorizationPolicy.authpolicy-allow-httpbin
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      istio.io/gateway-name: default
+  rules:
+    - to:
+        - operation:
+            hosts:
+              - httpbin.holos.localhost
+              - httpbin.holos.localhost:*
+      when:
+        - key: request.headers[user-agent]
+          values:
+            - anonymous
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: authpolicy-allow-httpbin
+  namespace: istio-gateways
+  labels:
+    app.kubernetes.io/name: authpolicy-allow-httpbin
+    app.kubernetes.io/part-of: default-gateway
+---
+# Source: CUE apiObjects.AuthorizationPolicy.authpolicy-allow-nothing
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      istio.io/gateway-name: default
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: authpolicy-allow-nothing
+  namespace: istio-gateways
+  labels:
+    app.kubernetes.io/name: authpolicy-allow-nothing
+    app.kubernetes.io/part-of: default-gateway
+---
+# Source: CUE apiObjects.AuthorizationPolicy.authpolicy-custom
+spec:
+  action: CUSTOM
+  provider:
+    name: default-gateway-authproxy
+  rules:
+    - to:
+        - operation:
+            notHosts:
+              - login.holos.run
+              - login.holos.run:*
+            notPaths:
+              - /holos/authproxy/{**}
+      when:
+        - key: request.headers[user-agent]
+          notValues:
+            - anonymous
+  selector:
+    matchLabels:
+      istio.io/gateway-name: default
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: authpolicy-custom
+  namespace: istio-gateways
+  labels:
+    app.kubernetes.io/name: authpolicy-custom
+    app.kubernetes.io/part-of: default-gateway
+---
+# Source: CUE apiObjects.RequestAuthentication.authpolicy
+spec:
+  jwtRules:
+    - audiences:
+        - "275571128859132936"
+        - 270319630705329162@holos_platform
+      forwardOriginalToken: true
+      fromHeaders:
+        - name: x-oidc-id-token
+      issuer: https://login.holos.run
+  selector:
+    matchLabels:
+      istio.io/gateway-name: default
+apiVersion: security.istio.io/v1
+kind: RequestAuthentication
+metadata:
+  name: authpolicy
+  namespace: istio-gateways
+  labels:
+    app.kubernetes.io/name: authpolicy
+    app.kubernetes.io/part-of: default-gateway

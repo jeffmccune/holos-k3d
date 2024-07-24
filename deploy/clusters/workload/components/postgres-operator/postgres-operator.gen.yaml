@@ -1,0 +1,240 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app.kubernetes.io/name: pgo
+    app.kubernetes.io/version: 5.5.1
+    postgres-operator.crunchydata.com/control-plane: postgres-operator
+  name: pgo
+  namespace: postgres-operator
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: pgo
+    app.kubernetes.io/version: 5.5.1
+    postgres-operator.crunchydata.com/control-plane: postgres-operator
+  name: postgres-operator
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  - persistentvolumeclaims
+  - secrets
+  - services
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - endpoints
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - endpoints/restricted
+  - pods/exec
+  verbs:
+  - create
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - delete
+  - get
+  - list
+  - patch
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - serviceaccounts
+  verbs:
+  - create
+  - get
+  - list
+  - patch
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  - statefulsets
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - watch
+- apiGroups:
+  - batch
+  resources:
+  - cronjobs
+  - jobs
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - watch
+- apiGroups:
+  - policy
+  resources:
+  - poddisruptionbudgets
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - watch
+- apiGroups:
+  - postgres-operator.crunchydata.com
+  resources:
+  - pgadmins
+  - pgupgrades
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - postgres-operator.crunchydata.com
+  resources:
+  - pgadmins/finalizers
+  - pgupgrades/finalizers
+  - postgresclusters/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - postgres-operator.crunchydata.com
+  resources:
+  - pgadmins/status
+  - pgupgrades/status
+  - postgresclusters/status
+  verbs:
+  - patch
+- apiGroups:
+  - postgres-operator.crunchydata.com
+  resources:
+  - postgresclusters
+  verbs:
+  - get
+  - list
+  - patch
+  - watch
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - rolebindings
+  - roles
+  verbs:
+  - create
+  - get
+  - list
+  - patch
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/name: pgo
+    app.kubernetes.io/version: 5.5.1
+    postgres-operator.crunchydata.com/control-plane: postgres-operator
+  name: postgres-operator
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: postgres-operator
+subjects:
+- kind: ServiceAccount
+  name: pgo
+  namespace: postgres-operator
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: pgo
+    app.kubernetes.io/version: 5.5.1
+    postgres-operator.crunchydata.com/control-plane: postgres-operator
+  name: pgo
+  namespace: postgres-operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      postgres-operator.crunchydata.com/control-plane: postgres-operator
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: pgo
+        app.kubernetes.io/version: 5.5.1
+        postgres-operator.crunchydata.com/control-plane: postgres-operator
+    spec:
+      containers:
+      - env:
+        - name: PGO_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: CRUNCHY_DEBUG
+          value: "true"
+        - name: RELATED_IMAGE_POSTGRES_15
+          value: registry.developers.crunchydata.com/crunchydata/crunchy-postgres:ubi8-15.6-0
+        - name: RELATED_IMAGE_POSTGRES_15_GIS_3.3
+          value: registry.developers.crunchydata.com/crunchydata/crunchy-postgres-gis:ubi8-15.6-3.3-0
+        - name: RELATED_IMAGE_POSTGRES_16
+          value: registry.developers.crunchydata.com/crunchydata/crunchy-postgres:ubi8-16.2-0
+        - name: RELATED_IMAGE_POSTGRES_16_GIS_3.3
+          value: registry.developers.crunchydata.com/crunchydata/crunchy-postgres-gis:ubi8-16.2-3.3-0
+        - name: RELATED_IMAGE_POSTGRES_16_GIS_3.4
+          value: registry.developers.crunchydata.com/crunchydata/crunchy-postgres-gis:ubi8-16.2-3.4-0
+        - name: RELATED_IMAGE_PGADMIN
+          value: registry.developers.crunchydata.com/crunchydata/crunchy-pgadmin4:ubi8-4.30-22
+        - name: RELATED_IMAGE_PGBACKREST
+          value: registry.developers.crunchydata.com/crunchydata/crunchy-pgbackrest:ubi8-2.49-0
+        - name: RELATED_IMAGE_PGBOUNCER
+          value: registry.developers.crunchydata.com/crunchydata/crunchy-pgbouncer:ubi8-1.21-3
+        - name: RELATED_IMAGE_PGEXPORTER
+          value: registry.developers.crunchydata.com/crunchydata/crunchy-postgres-exporter:ubi8-0.15.0-3
+        - name: RELATED_IMAGE_PGUPGRADE
+          value: registry.developers.crunchydata.com/crunchydata/crunchy-upgrade:ubi8-5.5.1-0
+        - name: RELATED_IMAGE_STANDALONE_PGADMIN
+          value: registry.developers.crunchydata.com/crunchydata/crunchy-pgadmin4:ubi8-7.8-3
+        image: registry.developers.crunchydata.com/crunchydata/postgres-operator:ubi8-5.5.1-0
+        name: operator
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+      serviceAccountName: pgo

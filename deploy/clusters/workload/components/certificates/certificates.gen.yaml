@@ -1,0 +1,60 @@
+---
+# Source: CUE apiObjects.Certificate.app.holos.localhost
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: app.holos.localhost
+  namespace: istio-gateways
+spec:
+  commonName: app.holos.localhost
+  dnsNames:
+    - app.holos.localhost
+  issuerRef:
+    kind: ClusterIssuer
+    name: local-ca
+  secretName: app.holos.localhost
+---
+# Source: CUE apiObjects.Certificate.argocd.holos.localhost
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: argocd.holos.localhost
+  namespace: istio-gateways
+spec:
+  commonName: argocd.holos.localhost
+  dnsNames:
+    - argocd.holos.localhost
+  issuerRef:
+    kind: ClusterIssuer
+    name: local-ca
+  secretName: argocd.holos.localhost
+---
+# Source: CUE apiObjects.Certificate.backstage.holos.localhost
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: backstage.holos.localhost
+  namespace: istio-gateways
+spec:
+  commonName: backstage.holos.localhost
+  dnsNames:
+    - backstage.holos.localhost
+  issuerRef:
+    kind: ClusterIssuer
+    name: local-ca
+  secretName: backstage.holos.localhost
+---
+# Source: CUE apiObjects.Certificate.httpbin.holos.localhost
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: httpbin.holos.localhost
+  namespace: istio-gateways
+spec:
+  commonName: httpbin.holos.localhost
+  dnsNames:
+    - httpbin.holos.localhost
+  issuerRef:
+    kind: ClusterIssuer
+    name: local-ca
+  secretName: httpbin.holos.localhost

@@ -1,0 +1,73 @@
+---
+# Source: CUE apiObjects.Gateway.default
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: default
+  namespace: istio-gateways
+spec:
+  gatewayClassName: istio
+  listeners:
+    - hostname: httpbin.holos.localhost
+      port: 443
+      protocol: HTTPS
+      tls:
+        certificateRefs:
+          - kind: Secret
+            name: httpbin.holos.localhost
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+            matchLabels: {}
+      name: global-httpbin-apex
+    - hostname: argocd.holos.localhost
+      port: 443
+      protocol: HTTPS
+      tls:
+        certificateRefs:
+          - kind: Secret
+            name: argocd.holos.localhost
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+            matchLabels: {}
+      name: global-argocd-apex
+    - hostname: backstage.holos.localhost
+      port: 443
+      protocol: HTTPS
+      tls:
+        certificateRefs:
+          - kind: Secret
+            name: backstage.holos.localhost
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+            matchLabels: {}
+      name: global-backstage-apex
+    - hostname: app.holos.localhost
+      port: 443
+      protocol: HTTPS
+      tls:
+        certificateRefs:
+          - kind: Secret
+            name: app.holos.localhost
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+            matchLabels: {}
+      name: global-app-apex
+---
+# Source: CUE apiObjects.ServiceAccount.default-istio
+metadata:
+  name: default-istio
+  namespace: istio-gateways
+  labels:
+    gateway.istio.io/managed: istio.io-gateway-controller
+    gateway.networking.k8s.io/gateway-name: default
+    istio.io/gateway-name: default
+kind: ServiceAccount
+apiVersion: v1
